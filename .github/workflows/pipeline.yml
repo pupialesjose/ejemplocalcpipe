@@ -1,0 +1,62 @@
+name: CI/CD Calculadora con Terraform
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      # AWS auth
+      - name: Configure AWS credentials
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-region: us-east-2
+
+      # Terraform
+      - name: Terraform init
+        run: terraform init
+        working-directory: terraform
+
+      - name: Terraform apply
+        run: terraform apply -auto-approve \
+          -var="aws_region=us-east-2" \
+          -var="ami_id=${{ secrets.AMI_ID }}" \
+          -var="key_name=${{ secrets.KEY_NAME }}" \
+          -var="docker_image=${{ secrets.DOCKERHUB_USERNAME }}/calculadora:latest"
+        working-directory: terraform
+
+      # Docker build & push
+      - name: Login Docker Hub
+        uses: docker/login-action@v3
+        with:
+          username: ${{ secrets.DOCKERHUB_USERNAME }}
+          password: ${{ secrets.DOCKERHUB_TOKEN }}
+
+      - name: Build and push image
+        uses: docker/build-push-action@v5
+        with:
+          context: .
+          push: true
+          tags: ${{ secrets.DOCKERHUB_USERNAME }}/calculadora:latest
+
+      # Update container (sin recrear EC2)
+      - name: Update app on EC2
+        uses: appleboy/ssh-action@v1.0.3
+        with:
+          host: ${{ steps.tf.outputs.public_ip }}
+          username: ubuntu
+          key: ${{ secrets.EC2_KEY }}
+          script: |
+            docker pull ${{ secrets.DOCKERHUB_USERNAME }}/calculadora:latest
+            docker stop calculadora || true
+            docker rm calculadora || true
+            docker run -d -p 8080:8080 --name calculadora ${{ secrets.DOCKERHUB_USERNAME }}/calculadora:latest
