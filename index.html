@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <title>Calculadora básica</title>
+</head>
+<body>
+  <h2>Calculadora básica</h2>
+
+  <input id="a" type="number" placeholder="Número 1">
+  <input id="b" type="number" placeholder="Número 2">
+
+  <br><br>
+
+  <button onclick="operar('+')">Sumar</button>
+  <button onclick="operar('-')">Restar</button>
+  <button onclick="operar('*')">Multiplicar</button>
+  <button onclick="operar('/')">Dividir</button>
+
+  <h3 id="resultado"></h3>
+
+  <script>
+    function operar(op) {
+      const a = Number(document.getElementById("a").value);
+      const b = Number(document.getElementById("b").value);
+      let res;
+
+      if (isNaN(a) || isNaN(b)) {
+        document.getElementById("resultado").innerText = "Ingrese ambos números";
+        return;
+      }
+
+      switch (op) {
+        case '+':
+          res = a + b;
+          break;
+        case '-':
+          res = a - b;
+          break;
+        case '*':
+          res = a * b;
+          break;
+        case '/':
+          if (b === 0) {
+            document.getElementById("resultado").innerText = "No se puede dividir entre 0";
+            return;
+          }
+          res = a / b;
+          break;
+      }
+
+      document.getElementById("resultado").innerText = "Resultado: " + res;
+    }
+  </script>
+</body>
+</html>

@@ -1,0 +1,2 @@
+# ejemplopipelinecalc
+Calculadora con Pipeline
