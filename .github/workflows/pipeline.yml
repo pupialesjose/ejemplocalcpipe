@@ -32,11 +32,7 @@ jobs:
         working-directory: terraform
 
       - name: Terraform apply
-        run: terraform apply -auto-approve \
-          -var="aws_region=us-east-2" \
-          -var="ami_id=${{ secrets.AMI_ID }}" \
-          -var="key_name=${{ secrets.KEY_NAME }}" \
-          -var="docker_image=${{ secrets.DOCKERHUB_USERNAME }}/calculadora:latest"
+        run: terraform apply -auto-approve -var="aws_region=us-east-2" -var="ami_id=${{ secrets.AMI_ID }}" -var="key_name=${{ secrets.KEY_NAME }}" -var="docker_image=${{ secrets.DOCKERHUB_USERNAME }}/calculadora:latest"
         working-directory: terraform
 
       # Docker build & push
