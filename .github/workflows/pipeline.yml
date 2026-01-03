@@ -59,7 +59,7 @@ jobs:
         uses: appleboy/ssh-action@v1.0.3
         with:
           host: ${{ steps.tf_output.outputs.INSTANCE_IP }}
-          username: ubuntu
+          username: ec2-user
           key: ${{ secrets.EC2_KEY }}
           script: |
             docker pull ${{ secrets.DOCKERHUB_USERNAME }}/calculadora:latest
