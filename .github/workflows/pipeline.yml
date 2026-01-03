@@ -54,6 +54,12 @@ jobs:
           echo "INSTANCE_IP=$(terraform output -raw instance_public_ip)" >> $GITHUB_OUTPUT
         working-directory: terraform
 
+      - name: Esperar a que EC2 acepte SSH
+        run: |
+          echo "Esperando 60 segundos para que EC2 levante SSH..."
+          sleep 60
+
+
       # Update container
       - name: Update app on EC2
         uses: appleboy/ssh-action@v1.0.3
