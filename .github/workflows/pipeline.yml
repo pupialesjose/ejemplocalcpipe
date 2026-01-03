@@ -35,6 +35,12 @@ jobs:
         run: terraform apply -auto-approve -var="aws_region=us-east-2" -var="ami_id=${{ secrets.AMI_ID }}" -var="key_name=${{ secrets.KEY_NAME }}" -var="docker_image=${{ secrets.DOCKERHUB_USERNAME }}/calculadora:latest"
         working-directory: terraform
 
+      - name: Obtener IP pública de la instancia
+        id: tf_output
+        run: |
+          echo "INSTANCE_IP=$(terraform output -raw instance_public_ip)" >> $GITHUB_OUTPUT
+
+
       # Docker build & push
       - name: Login Docker Hub
         uses: docker/login-action@v3
