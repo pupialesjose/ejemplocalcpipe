@@ -68,7 +68,7 @@ jobs:
           username: ubuntu
           key: ${{ secrets.EC2_KEY }}
           script: |
-            docker pull ${{ secrets.DOCKERHUB_USERNAME }}/calculadora:latest
-            docker stop calculadora || true
-            docker rm calculadora || true
-            docker run -d -p 8080:8080 --name calculadora ${{ secrets.DOCKERHUB_USERNAME }}/calculadora:latest
+            sudo docker pull ${{ secrets.DOCKERHUB_USERNAME }}/calculadora:latest
+            sudo docker stop calculadora || true
+            sudo docker rm calculadora || true
+            sudo docker run -d -p 8080:8080 --name calculadora ${{ secrets.DOCKERHUB_USERNAME }}/calculadora:latest
